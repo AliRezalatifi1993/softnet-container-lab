@@ -1,0 +1,87 @@
+===== Docker containers =====
+CONTAINER ID   IMAGE                         COMMAND            CREATED             STATUS             PORTS     NAMES
+3e6c0d86efbd   clab-softnet-routing:latest   "sleep infinity"   12 minutes ago      Up 12 minutes                clab-routing-lab-hs2
+756fd476c340   clab-softnet-routing:latest   "sleep infinity"   12 minutes ago      Up 12 minutes                clab-routing-lab-hs1
+ffd970b8686b   clab-softnet-routing:latest   "sleep infinity"   12 minutes ago      Up 12 minutes                clab-routing-lab-rt1
+ca0d0d4847b4   clab-softnet-basic:latest     "sleep infinity"   About an hour ago   Up About an hour             clab-basic-lab-node2
+162b72110dc6   clab-softnet-basic:latest     "sleep infinity"   About an hour ago   Up About an hour             clab-basic-lab-node1
+
+===== IP addresses =====
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+eth0@if19        UP             172.20.20.5/24 3fff:172:20:20::5/64 fe80::c88c:c9ff:fec9:faa7/64 
+eth1@if21        UP             10.0.1.1/24 fc00:1::1/64 
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+eth0@if18        UP             172.20.20.4/24 3fff:172:20:20::4/64 fe80::b8e1:98ff:fea9:731/64 
+eth1@if20        UP             10.0.1.254/24 fc00:1::254/64 
+eth2@if22        UP             10.0.2.254/24 fc00:2::254/64 fe80::a8c1:abff:fe37:720e/64 
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+eth0@if24        UP             172.20.20.6/24 3fff:172:20:20::6/64 fe80::40fb:31ff:fec6:9127/64 
+eth1@if23        UP             10.0.2.1/24 fc00:2::1/64 
+
+===== IPv4 routes =====
+default via 10.0.1.254 dev eth1 
+10.0.1.0/24 dev eth1 proto kernel scope link src 10.0.1.1 
+172.20.20.0/24 dev eth0 proto kernel scope link src 172.20.20.5 
+default via 172.20.20.1 dev eth0 
+10.0.1.0/24 dev eth1 proto kernel scope link src 10.0.1.254 
+10.0.2.0/24 dev eth2 proto kernel scope link src 10.0.2.254 
+172.20.20.0/24 dev eth0 proto kernel scope link src 172.20.20.4 
+default via 10.0.2.254 dev eth1 
+10.0.2.0/24 dev eth1 proto kernel scope link src 10.0.2.1 
+172.20.20.0/24 dev eth0 proto kernel scope link src 172.20.20.6 
+
+===== IPv6 routes =====
+3fff:172:20:20::/64 dev eth0 proto kernel metric 256 pref medium
+fc00:1::/64 dev eth1 proto kernel metric 256 pref medium
+fe80::/64 dev eth0 proto kernel metric 256 pref medium
+default via fc00:1::254 dev eth1 metric 1024 pref medium
+3fff:172:20:20::/64 dev eth0 proto kernel metric 256 pref medium
+fc00:1::/64 dev eth1 proto kernel metric 256 pref medium
+fc00:2::/64 dev eth2 proto kernel metric 256 pref medium
+fe80::/64 dev eth0 proto kernel metric 256 pref medium
+fe80::/64 dev eth2 proto kernel metric 256 pref medium
+default via 3fff:172:20:20::1 dev eth0 metric 1024 pref medium
+3fff:172:20:20::/64 dev eth0 proto kernel metric 256 pref medium
+fc00:2::/64 dev eth1 proto kernel metric 256 pref medium
+fe80::/64 dev eth0 proto kernel metric 256 pref medium
+default via fc00:2::254 dev eth1 metric 1024 pref medium
+
+===== Forwarding on rt1 =====
+net.ipv4.ip_forward = 1
+net.ipv6.conf.all.forwarding = 1
+
+===== IPv4 ping tests =====
+PING 10.0.2.1 (10.0.2.1) 56(84) bytes of data.
+64 bytes from 10.0.2.1: icmp_seq=1 ttl=63 time=1.01 ms
+64 bytes from 10.0.2.1: icmp_seq=2 ttl=63 time=0.147 ms
+64 bytes from 10.0.2.1: icmp_seq=3 ttl=63 time=0.132 ms
+
+--- 10.0.2.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2040ms
+rtt min/avg/max/mdev = 0.132/0.428/1.007/0.408 ms
+PING 10.0.1.1 (10.0.1.1) 56(84) bytes of data.
+64 bytes from 10.0.1.1: icmp_seq=1 ttl=63 time=0.179 ms
+64 bytes from 10.0.1.1: icmp_seq=2 ttl=63 time=0.066 ms
+64 bytes from 10.0.1.1: icmp_seq=3 ttl=63 time=0.074 ms
+
+--- 10.0.1.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2083ms
+rtt min/avg/max/mdev = 0.066/0.106/0.179/0.051 ms
+
+===== IPv6 ping tests =====
+PING fc00:2::1 (fc00:2::1) 56 data bytes
+64 bytes from fc00:2::1: icmp_seq=1 ttl=63 time=0.067 ms
+64 bytes from fc00:2::1: icmp_seq=2 ttl=63 time=0.110 ms
+64 bytes from fc00:2::1: icmp_seq=3 ttl=63 time=0.110 ms
+
+--- fc00:2::1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2080ms
+rtt min/avg/max/mdev = 0.067/0.095/0.110/0.020 ms
+PING fc00:1::1 (fc00:1::1) 56 data bytes
+64 bytes from fc00:1::1: icmp_seq=1 ttl=63 time=0.041 ms
+64 bytes from fc00:1::1: icmp_seq=2 ttl=63 time=0.091 ms
+64 bytes from fc00:1::1: icmp_seq=3 ttl=63 time=0.129 ms
+
+--- fc00:1::1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2086ms
+rtt min/avg/max/mdev = 0.041/0.087/0.129/0.036 ms
